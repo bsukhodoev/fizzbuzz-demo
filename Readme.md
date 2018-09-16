@@ -8,7 +8,7 @@ Application build on Spring Boot 2 and can be started locally by the following c
   
     ./mvnw spring-boot:run
   
-Web page to play this game should be here: [http://localhost:8080/]
+Web page to play this game should be here: [http://localhost:8080/](http://localhost:8080/)
 
 Go to the [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html) to find out REST API documentation and try example.
 
