@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="app.css">
+
+    <title>Fizz Buzz Game</title>
+</head>
+<body>
+<h1>Fizz Buzz Game</h1>
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+<script language="JavaScript">
+    $(function() {
+        $(document)
+            .on('click', '.btn-add', function(e) {
+                e.preventDefault();
+
+                var controlForm = $('.controls form:first'),
+                    currentEntry = $(this).parents('.entry:first'),
+                    newEntry = $(currentEntry.clone()).appendTo(controlForm);
+
+                newEntry.find('input').val('1');
+
+                controlForm.find('.entry:not(:last) .btn-add')
+                    .removeClass('btn-add').addClass('btn-remove')
+                    .removeClass('btn-success').addClass('btn-danger')
+                    .html('<span class="fa fa-minus"></span>');
+            })
+            .on('click', '.btn-remove', function(e) {
+                $(this).parents('.entry:first').remove();
+
+                e.preventDefault();
+                return false;
+            })
+            .on('click', '#sendFormBtn', function(e) {
+                e.preventDefault();
+                var numbers = [];
+                $('#numbersForm').first().find('input').each(function() {
+                    if (this.value) {
+                        numbers.push(this.value)
+                    }
+                });
+
+                if (numbers.length === 0) {
+                    alert("Nothing to send.");
+                    return false;
+                }
+
+                if (numbers.some(function (value) { return value < 1 })) {
+                    alert("All numbers must be positive!");
+                    return false;
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: '/fizzbuzz',
+                    contentType: 'application/json',
+                    dataType: "json",
+                    data: JSON.stringify({"numbers": numbers})
+                }).done(function(data) {
+                    alert('Fizz Buzz result: ' + data.result)
+                }).fail(function() {
+                    alert("Something goes wrong.");
+                });
+
+                return false;
+            });
+    });
+</script>
+
+<div class="container">
+    <div class="row">
+        <div class="control-group" id="fields">
+            <label class="control-label" for="field1">Type you numbers here:</label>
+            <div class="controls">
+                <form role="form" id="numbersForm" autocomplete="off">
+                    <div class="entry input-group col-xs-3">
+                        <input class="form-control" name="fields[]" type="number" min="1" value="1" placeholder="Type your number" />
+                        <span class="input-group-btn">
+                            <button class="btn btn-success btn-add" type="button">
+                                <span class="fa fa-plus"></span>
+                            </button>
+                        </span>
+                    </div>
+                </form>
+                <br>
+                <small>Press <span class="fa fa-plus gs"></span> to add another number</small>
+                <br>
+                <button type="button" class="btn btn-primary" id="sendFormBtn">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
